@@ -80,9 +80,40 @@ void testAddItem_invalidCode_throwsException() {
     }
 
     @Test
-    void testGetItem() {
+    void testGetItem_occupiedSlot_returnsItem() {
+        //Arrange
+        VendingMachineItem item =
+            new VendingMachineItem("Chips", 1.50);
+    machine.addItem(item, "A");
+
+
+        //Act
+VendingMachineItem result = machine.getItem("A");
+        //Assert
+assertSame(item, result);
 
     }
+
+    @Test
+void testGetItem_emptySlot_returnsNull() {
+    // Act
+    VendingMachineItem result = machine.getItem("A");
+
+    // Assert
+    assertNull(result);
+}
+
+@Test
+void testGetItem_invalidCode_throwsException() {
+    // Act + Assert
+    assertThrows(
+        VendingMachineException.class,
+        () -> machine.getItem("E")
+    );
+}
+
+
+
 
     @Test
     void testInsertMoney() {
@@ -95,9 +126,37 @@ void testAddItem_invalidCode_throwsException() {
     }
 
     @Test
-    void testRemoveItem() {
+void testRemoveItem_occupiedSlot_removesAndReturnsItem() {
+    // Arrange
+    VendingMachineItem item =
+            new VendingMachineItem("Chips", 1.50);
+    machine.addItem(item, "A");
 
-    }
+    // Act
+    VendingMachineItem removedItem = machine.removeItem("A");
+
+    // Assert
+    assertSame(item, removedItem);
+    assertNull(machine.getItem("A"));
+}
+
+@Test
+void testRemoveItem_emptySlot_throwsException() {
+    // Act + Assert
+    assertThrows(
+        VendingMachineException.class,
+        () -> machine.removeItem("A")
+    );
+}
+
+@Test
+void testRemoveItem_invalidCode_throwsException() {
+    // Act + Assert
+    assertThrows(
+        VendingMachineException.class,
+        () -> machine.removeItem("E")
+    );
+}
 
     @Test
     void testReturnChange() {
