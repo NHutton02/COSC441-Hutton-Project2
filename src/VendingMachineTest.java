@@ -1,14 +1,23 @@
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class VendingMachineTest {
+    VendingMachine machine;
+
+    @BeforeEach 
+        void setUp(){
+            machine = new VendingMachine();
+        }
 
     @Test 
     void testConstructor_initialState_emptyAndZeroBalance(){
 
-        VendingMachine machine = new VendingMachine();
+        
 
         //assert
         assertEquals(0.0, machine.getBalance(), 0.001);
@@ -20,14 +29,50 @@ public class VendingMachineTest {
 
     }
 
+@Test
+void testAddItem_validEmptySlot_addsItem() {
+    // Arrange
+    VendingMachineItem item =
+            new VendingMachineItem("Chips", 1.50);
 
+    // Act
+    machine.addItem(item, "A");
 
+    // Assert
+    assertSame(item, machine.getItem("A"));
+}
 
+@Test
+void testAddItem_occupiedSlot_throwsException() {
+    // Arrange
+    VendingMachineItem firstItem =
+            new VendingMachineItem("Chips", 1.50);
 
-    @Test
-    void testAddItem() {
+    VendingMachineItem secondItem =
+            new VendingMachineItem("Candy", 1.00);
 
-    }
+    machine.addItem(firstItem, "A");
+
+    // Act + Assert
+    assertThrows(
+        VendingMachineException.class,
+        () -> machine.addItem(secondItem, "A")
+    );
+}
+
+@Test
+void testAddItem_invalidCode_throwsException() {
+    // Arrange
+    VendingMachineItem item =
+            new VendingMachineItem("Chips", 1.50);
+
+    // Act + Assert
+    assertThrows(
+        VendingMachineException.class,
+        () -> machine.addItem(item, "E")
+    );
+}
+    
 
     @Test
     void testGetBalance() {
