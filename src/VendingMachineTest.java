@@ -1,7 +1,4 @@
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -162,11 +159,76 @@ void testInsertMoney_boundaryValues(double amount, boolean shouldBeValid) {
 
 
     
+@Test
+void testMakePurchase_exactBalance_completesPurchase() {
+    // Arrange
+    VendingMachineItem item = new VendingMachineItem("Chips", 1.50);
+    machine.addItem(item, "A");
+    machine.insertMoney(1.50);
 
-    @Test
-    void testMakePurchase() {
+    // Act
+    boolean result = machine.makePurchase("A");
 
-    }
+    // Assert
+    assertTrue(result);
+    assertEquals(0.0, machine.getBalance(), 0.001);
+    assertNull(machine.getItem("A"));
+}
+
+@Test
+void testMakePurchase_excessBalance_completesPurchaseAndLeavesBalance() {
+    // Arrange
+    VendingMachineItem item = new VendingMachineItem("Chips", 1.50);
+    machine.addItem(item, "A");
+    machine.insertMoney(2.00);
+
+    // Act
+    boolean result = machine.makePurchase("A");
+
+    // Assert
+    assertTrue(result);
+    assertEquals(0.50, machine.getBalance(), 0.001);
+    assertNull(machine.getItem("A"));
+}
+
+@Test
+void testMakePurchase_insufficientBalance_returnsFalse() {
+    // Arrange
+    VendingMachineItem item = new VendingMachineItem("Chips", 1.50);
+    machine.addItem(item, "A");
+    machine.insertMoney(1.00);
+
+    // Act
+    boolean result = machine.makePurchase("A");
+
+    // Assert
+    assertFalse(result);
+    assertEquals(1.00, machine.getBalance(), 0.001);
+    assertSame(item, machine.getItem("A"));
+}
+
+@Test
+void testMakePurchase_emptySlot_returnsFalse() {
+    // Arrange
+    machine.insertMoney(2.00);
+
+    // Act
+    boolean result = machine.makePurchase("A");
+
+    // Assert
+    assertFalse(result);
+    assertEquals(2.00, machine.getBalance(), 0.001);
+    assertNull(machine.getItem("A"));
+}
+
+@Test
+void testMakePurchase_invalidCode_throwsException() {
+    // Act + Assert
+    assertThrows(
+        VendingMachineException.class,
+        () -> machine.makePurchase("E")
+    );
+}
 
     @Test
 void testRemoveItem_occupiedSlot_removesAndReturnsItem() {
