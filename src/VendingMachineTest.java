@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class VendingMachineTest {
     VendingMachine machine;
@@ -75,8 +77,24 @@ void testAddItem_invalidCode_throwsException() {
     
 
     @Test
-    void testGetBalance() {
-
+    void testGetBalance_initialBalance_isZero() {
+        // Act
+        double balance = machine.getBalance();
+    
+        // Assert
+        assertEquals(0.0, balance, 0.001);
+    }
+    
+    @Test
+    void testGetBalance_afterInsert_returnsCurrentBalance() {
+        // Arrange
+        machine.insertMoney(2.50);
+    
+        // Act
+        double balance = machine.getBalance();
+    
+        // Assert
+        assertEquals(2.50, balance, 0.001);
     }
 
     @Test
@@ -112,13 +130,38 @@ void testGetItem_invalidCode_throwsException() {
     );
 }
 
+@ParameterizedTest
+@CsvSource({
+    "-1.00, false",
+    "-0.01, false",
+    "0.00, true",
+    "0.01, true",
+    "0.99, true",
+    "1.00, true",
+    "2.50, true"
+})
+void testInsertMoney_boundaryValues(double amount, boolean shouldBeValid) {
 
+    if (shouldBeValid) {
+        // Act
+        machine.insertMoney(amount);
 
+        // Assert
+        assertEquals(amount, machine.getBalance(), 0.001);
 
-    @Test
-    void testInsertMoney() {
+    } else {
+        // Act + Assert
+        assertThrows(
+            VendingMachineException.class,
+            () -> machine.insertMoney(amount)
+        );
 
+        assertEquals(0.0, machine.getBalance(), 0.001);
     }
+}
+
+
+    
 
     @Test
     void testMakePurchase() {

@@ -44,3 +44,8 @@ The exact parameterized test structure will be finalized when the JUnit tests ar
 ## Test Oracle
 
 Expected results will be determined from the Javadocs, documented preconditions and postconditions, and manual calculations where necessary. The current behavior of the source code will not be used as the oracle because the provided project may contain faults.
+
+The parameterized test `testInsertMoney_boundaryValues()` uses seven input values:
+-1.00, -0.01, 0.00, 0.01, 0.99, 1.00, and 2.50.
+
+The values were selected to test the invalid equivalence class below zero, the exact boundary at zero, values immediately above zero, values below one dollar, and ordinary valid positive amounts.
