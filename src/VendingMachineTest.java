@@ -263,8 +263,26 @@ void testRemoveItem_invalidCode_throwsException() {
     );
 }
 
-    @Test
-    void testReturnChange() {
+   @Test
+void testReturnChange_positiveBalance_returnsBalanceAndResetsToZero() {
+    // Arrange
+    machine.insertMoney(2.50);
 
-    }
+    // Act
+    double change = machine.returnChange();
+
+    // Assert
+    assertEquals(2.50, change, 0.001);
+    assertEquals(0.0, machine.getBalance(), 0.001);
+}
+
+@Test
+void testReturnChange_zeroBalance_returnsZero() {
+    // Act
+    double change = machine.returnChange();
+
+    // Assert
+    assertEquals(0.0, change, 0.001);
+    assertEquals(0.0, machine.getBalance(), 0.001);
+}
 }
