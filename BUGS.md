@@ -22,3 +22,27 @@ Changed the loop condition from:
 to:
 
 `i < NUM_SLOTS`
+
+## Bug 2 - insertMoney Rejects Valid Amounts Below One Dollar
+
+### Observed Failure
+The parameterized `insertMoney()` test showed that the vending machine
+rejected valid amounts of 0.00, 0.01, and 0.99 by throwing a
+`VendingMachineException`.
+
+### Test That Exposed It
+`testInsertMoney_boundaryValues()`
+
+### Source-Code Fault
+The validation condition in `insertMoney()` incorrectly treated
+non-negative amounts below 1.00 as invalid.
+
+### Diagnosis
+The parameterized boundary test showed that negative values were
+correctly rejected and values of 1.00 or greater were accepted, but
+0.00, 0.01, and 0.99 were incorrectly rejected. Debugging the method
+showed that the validation condition was using the wrong boundary.
+
+### Correction
+Changed the validation condition so that only amounts less than 0
+cause a `VendingMachineException`.
